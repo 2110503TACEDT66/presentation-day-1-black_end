@@ -18,9 +18,9 @@ dotenv.config({path:'./config/config.env'});
 connectDB();
 
 //Route files
-const hospitals = require('./routes/hospitals');
+const companies = require('./routes/companies');
 const auth = require('./routes/auth')
-const appointments = require('./routes/appointments')
+const appointments = require('./routes/interviews')
 
 const app = express();
 
@@ -34,7 +34,7 @@ const swaggerOptions = {
         info: {
             title: 'Library API',
             version: '1.0.0',
-            description: 'A simple Express VacQ API'
+            description: 'A simple Express JobFair API'
         },
         servers: [
             {
@@ -75,9 +75,9 @@ app.use(mongoSanitize());
 app.use(cookieParser());
 
 //Mount routers
-app.use('/api/v1/hospitals', hospitals);
+app.use('/api/v1/companies', companies);
 app.use('/api/v1/auth', auth);
-app.use('/api/v1/appointments', appointments);
+app.use('/api/v1/interviews', interviews);
 
 const PORT = process.env.PORT || 5000;
 
