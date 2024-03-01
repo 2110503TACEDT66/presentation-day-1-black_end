@@ -3,7 +3,7 @@ const Company = require('../models/Company.js');
 //@desc         Get all companies
 //@route        GET /api/v1/companies
 //@access       Public
-exports.getCompanys= async (req, res, next)=>{
+exports.getCompanies= async (req, res, next)=>{
     let query;
 
     //Copy req.query
@@ -138,19 +138,3 @@ exports.deleteCompany= async (req, res, next)=>{
         res.status(400).json({success: false});
     }
 };
-
-
-// //@desc         Get Vaccine Centers
-// //@route        GET /api/v1/companies/vacCenters/
-// //@access       Public
-// exports.getVacCenters= async (req, res, next)=>{
-//     vacCenter.getAll((err, data) => {
-//         if (err) {
-//             res.status(500).send({
-//                 message: err.message || 'Some error occurred while retrieving Vaccine Centers.'
-//             });
-//         } else {
-//             res.send(data);
-//         }
-//     });
-// };
