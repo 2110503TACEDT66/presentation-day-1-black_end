@@ -1,8 +1,8 @@
 const Company = require('../models/Company.js');
 const vacCenter = require('../models/VacCenter.js');
 
-//@desc         Get all companys
-//@route        GET /api/v1/companys
+//@desc         Get all companies
+//@route        GET /api/v1/companies
 //@access       Public
 exports.getCompanys= async (req, res, next)=>{
     let query;
@@ -24,7 +24,7 @@ exports.getCompanys= async (req, res, next)=>{
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     //Finding resource
-    query = Hospital.find(JSON.parse(queryStr)).populate('interviews');
+    query = Company.find(JSON.parse(queryStr)).populate('interviews');
 
     //Select fields
     if(req.query.select) {
@@ -49,7 +49,7 @@ exports.getCompanys= async (req, res, next)=>{
         const total = await Company.countDocuments();
         query = query.skip(startIndex).limit(limit);
         //Execute query
-        const companys = await query;
+        const companies = await query;
 
         //Pagination result
         const pagination = {};
@@ -69,20 +69,20 @@ exports.getCompanys= async (req, res, next)=>{
         }
         res.status(200).json({
             success: true,
-            count: companys.length,
+            count: companies.length,
             pagination,
-            data: companys
+            data: companies
         });
     } catch(err) {
         res.status(400).json({success: false});
     }
 };
 //@desc         Get single company
-//@route        GET /api/v1/companys/:id
+//@route        GET /api/v1/companies/:id
 //@access       Public
 exports.getCompany= async (req, res, next)=>{
     try {
-        const company = await Hospital.findById(req.params.id);
+        const company = await Company.findById(req.params.id);
 
         if (!company) {
             return res.status(400).json({success: false});
@@ -103,53 +103,55 @@ exports.createCompany= async (req, res, next)=>{
         data: company
     });
 };
-//@desc         Update hospital
-//@route        PUT /api/v1/hospitals/:id
+//@desc         Update company
+//@route        PUT /api/v1/companies/:id
 //@access       Private
 exports.updateHospital= async (req, res, next)=>{
     try {
-        const hospital = await Hospital.findByIdAndUpdate(req.params.id, req.body, {
+        const company = await Company.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
 
-        if (!hospital) {
+        if (!company) {
             return res.status(400).json({success: false});
         }
 
-        res.status(200).json({success: true, data:hospital});
+        res.status(200).json({success: true, data:company});
     } catch(err) {
         res.status(400).json({success: false});
     }
 };
-//@desc         Delete hospital
-//@route        DELETE /api/v1/hospitals/:id
+//@desc         Delete company
+//@route        DELETE /api/v1/companies/:id
 //@access       Private
 exports.deleteHospital= async (req, res, next)=>{
     try {
-        const hospital = await Hospital.findById(req.params.id);
+        const company = await Company.findById(req.params.id);
 
-        if (!hospital) {
+        if (!company) {
             return res.status(404).json({success: false, message: `Bootcamp not found with id of ${req.params.id}`});
         }
 
-        await hospital.deleteOne();
-        res.status(200).json({success: true, data:hospital});   
+        await company.deleteOne();
+        res.status(200).json({success: true, data:company});   
     } catch {
         res.status(400).json({success: false});
     }
 };
-//@desc         Get Vaccine Centers
-//@route        GET /api/v1/hospitals/vacCenters/
-//@access       Public
-exports.getVacCenters= async (req, res, next)=>{
-    vacCenter.getAll((err, data) => {
-        if (err) {
-            res.status(500).send({
-                message: err.message || 'Some error occurred while retrieving Vaccine Centers.'
-            });
-        } else {
-            res.send(data);
-        }
-    });
-};
+
+
+// //@desc         Get Vaccine Centers
+// //@route        GET /api/v1/companies/vacCenters/
+// //@access       Public
+// exports.getVacCenters= async (req, res, next)=>{
+//     vacCenter.getAll((err, data) => {
+//         if (err) {
+//             res.status(500).send({
+//                 message: err.message || 'Some error occurred while retrieving Vaccine Centers.'
+//             });
+//         } else {
+//             res.send(data);
+//         }
+//     });
+// };
