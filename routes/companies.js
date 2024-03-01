@@ -1,21 +1,21 @@
 const express = require('express');
 
-const {getHospitals, getHospital, createHospital, updateHospital, deleteHospital, getVacCenters} = require('../controllers/hospitals');
+const {getCompanies, getCompany, createCompany, updateCompany, deleteCompany} = require('../controllers/companies');
 
 //Include other resource routers
-const appointmentRouter = require('./appointments');
+const interviewRouter = require('./interviews');
 
 const router = express.Router();
 
 const {protect, authorize} = require('../middleware/auth');
 
 //Re-route into other resource routers
-router.use('/:hospitalId/appointments/', appointmentRouter);
+router.use('/:companyId/interviews/', interviewRouter);
 
-router.route('/vacCenters').get(getVacCenters);
+//router.route('/vacCenters').get(getVacCenters);
 
-router.route('/').get(getHospitals).post(protect, authorize('admin'), createHospital);
-router.route('/:id').get(getHospital).put(protect, authorize('admin'), updateHospital).delete(protect, authorize('admin'), deleteHospital);
+router.route('/').get(getCompanies).post(protect, authorize('admin'), createCompany);
+router.route('/:id').get(getCompany).put(protect, authorize('admin'), updateCompany).delete(protect, authorize('admin'), deleteCompany);
 
 module.exports = router;
 
