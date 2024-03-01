@@ -96,11 +96,15 @@ exports.getCompany= async (req, res, next)=>{
 //@route        POST /api/v1/company
 //@access       Private
 exports.createCompany= async (req, res, next)=>{
-    const company = await Company.create(req.body);
-    res.status(201).json({
-        success: true,
-        data: company
-    });
+    try {
+        const company = await Company.create(req.body);
+        res.status(201).json({
+            success: true,
+            data: company
+        });
+    } catch(err) {
+        res.status(400).json({success: false});
+    }
 };
 //@desc         Update company
 //@route        PUT /api/v1/companies/:id
