@@ -159,7 +159,7 @@ exports.deleteInterview = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            data: interview
+            data: {}
         });
     } catch (error) {
         console.log(error);

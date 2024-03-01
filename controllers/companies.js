@@ -133,7 +133,7 @@ exports.deleteCompany= async (req, res, next)=>{
         }
 
         await company.deleteOne();
-        res.status(200).json({success: true, data:company});   
+        res.status(200).json({success: true, data: {}});   
     } catch {
         res.status(400).json({success: false});
     }
