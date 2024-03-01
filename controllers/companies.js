@@ -1,5 +1,4 @@
 const Company = require('../models/Company.js');
-const vacCenter = require('../models/VacCenter.js');
 
 //@desc         Get all companies
 //@route        GET /api/v1/companies
