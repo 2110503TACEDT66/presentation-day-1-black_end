@@ -105,7 +105,7 @@ exports.createCompany= async (req, res, next)=>{
 //@desc         Update company
 //@route        PUT /api/v1/companies/:id
 //@access       Private
-exports.updateHospital= async (req, res, next)=>{
+exports.updateCompany= async (req, res, next)=>{
     try {
         const company = await Company.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -124,7 +124,7 @@ exports.updateHospital= async (req, res, next)=>{
 //@desc         Delete company
 //@route        DELETE /api/v1/companies/:id
 //@access       Private
-exports.deleteHospital= async (req, res, next)=>{
+exports.deleteCompany= async (req, res, next)=>{
     try {
         const company = await Company.findById(req.params.id);
 

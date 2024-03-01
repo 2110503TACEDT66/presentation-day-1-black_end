@@ -20,7 +20,7 @@ connectDB();
 //Route files
 const companies = require('./routes/companies');
 const auth = require('./routes/auth')
-const appointments = require('./routes/interviews')
+const interviews = require('./routes/interviews')
 
 const app = express();
 

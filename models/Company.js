@@ -39,7 +39,7 @@ CompanySchema.virtual('interviews', {
     justOne: false
 });
 
-//Cascade delete appointments when a hospital is deleted
+//Cascade delete interviews when a company is deleted
 CompanySchema.pre('deleteOne', { document: true, query: false }, async function(next) {
     console.log(`Interview sessions being removed from Company ${this._id}`);
     await this.model('Company').deleteMany({company: this._id});
