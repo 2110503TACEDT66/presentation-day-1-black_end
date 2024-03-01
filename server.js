@@ -8,8 +8,6 @@ const {xss} = require('express-xss-sanitizer');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const cors = require('cors');
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUI = require('swagger-ui-express');
 
 //Load env variables
 dotenv.config({path:'./config/config.env'});
@@ -26,27 +24,6 @@ const app = express();
 
 //Body Parser
 app.use(express.json());
-
-//Swagger
-const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'Library API',
-            version: '1.0.0',
-            description: 'A simple Express JobFair API'
-        },
-        servers: [
-            {
-                url: 'http://localhost:5000/api/v1'
-            }
-        ]
-    },
-    apis: ['./routes/*.js'],
-};
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 //Enable CORS
 app.use(cors());
