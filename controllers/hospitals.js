@@ -1,10 +1,10 @@
-const Hospital = require('../models/Hospital.js');
+const Company = require('../models/Company.js');
 const vacCenter = require('../models/VacCenter.js');
 
-//@desc         Get all hospitals
-//@route        GET /api/v1/hospitals
+//@desc         Get all companys
+//@route        GET /api/v1/companys
 //@access       Public
-exports.getHospitals= async (req, res, next)=>{
+exports.getCompanys= async (req, res, next)=>{
     let query;
 
     //Copy req.query
@@ -24,7 +24,7 @@ exports.getHospitals= async (req, res, next)=>{
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     //Finding resource
-    query = Hospital.find(JSON.parse(queryStr)).populate('appointments');
+    query = Hospital.find(JSON.parse(queryStr)).populate('interviews');
 
     //Select fields
     if(req.query.select) {
@@ -46,10 +46,10 @@ exports.getHospitals= async (req, res, next)=>{
     const endIndex = page*limit;
 
     try {
-        const total = await Hospital.countDocuments();
+        const total = await Company.countDocuments();
         query = query.skip(startIndex).limit(limit);
         //Execute query
-        const hospitals = await query;
+        const companys = await query;
 
         //Pagination result
         const pagination = {};
@@ -69,38 +69,38 @@ exports.getHospitals= async (req, res, next)=>{
         }
         res.status(200).json({
             success: true,
-            count: hospitals.length,
+            count: companys.length,
             pagination,
-            data: hospitals
+            data: companys
         });
     } catch(err) {
         res.status(400).json({success: false});
     }
 };
-//@desc         Get single hospital
-//@route        GET /api/v1/hospitals/:id
+//@desc         Get single company
+//@route        GET /api/v1/companys/:id
 //@access       Public
-exports.getHospital= async (req, res, next)=>{
+exports.getCompany= async (req, res, next)=>{
     try {
-        const hospital = await Hospital.findById(req.params.id);
+        const company = await Hospital.findById(req.params.id);
 
-        if (!hospital) {
+        if (!company) {
             return res.status(400).json({success: false});
         }
 
-        res.status(200).json({success: true, data:hospital});
+        res.status(200).json({success: true, data:company});
     } catch(err) {
         res.status(400).json({success: false});
     }
 };
-//@desc         Create new hospital
-//@route        POST /api/v1/hospitals
+//@desc         Create new company
+//@route        POST /api/v1/company
 //@access       Private
-exports.createHospital= async (req, res, next)=>{
-    const hospital = await Hospital.create(req.body);
+exports.createCompany= async (req, res, next)=>{
+    const company = await Company.create(req.body);
     res.status(201).json({
         success: true,
-        data: hospital
+        data: company
     });
 };
 //@desc         Update hospital
