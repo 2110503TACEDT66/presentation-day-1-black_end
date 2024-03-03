@@ -1,0 +1,30 @@
+@startuml
+
+entity User {
+    +id:(PK)
+    name:string
+    tel:string
+    email:string
+    password:string
+    role:string
+}
+
+entity Company {
+    +id:(PK)
+    companyName: string
+    industry: string
+    ...
+}
+
+entity Interview {
+    +id:(PK)
+    sessionDate: date
+    sessionTime: time
+    ...
+}
+
+
+User ||--o{ Interview
+Company }o--o{ Interview
+
+@enduml
