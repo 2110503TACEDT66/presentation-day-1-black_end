@@ -44,7 +44,7 @@ CompanySchema.virtual('interviews', {
 //Cascade delete interviews when a company is deleted
 CompanySchema.pre('deleteOne', { document: true, query: false }, async function(next) {
     console.log(`Interview sessions being removed from Company ${this._id}`);
-    await this.model('Company').deleteMany({company: this._id});
+    await this.model('Interview').deleteMany({company: this._id});
     next();
 })
 
