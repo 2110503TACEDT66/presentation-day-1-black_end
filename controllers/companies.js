@@ -1,4 +1,5 @@
 const Company = require('../models/Company.js');
+const axios = require('axios');
 
 //@desc         Get all companies
 //@route        GET /api/v1/companies
@@ -97,10 +98,28 @@ exports.getCompany= async (req, res, next)=>{
 //@access       Private
 exports.createCompany= async (req, res, next)=>{
     try {
+        // Fetch a random quote
+        const response = await axios.get('https://api.quotable.io/quotes/random?tags=business');
+        const data = response.data;
+
+        // Log the received data
+        console.log('Data received:', data);
+
+        // Add the quote to the request body
+        if (data.length > 0) {
+            quote = await data[0].content;
+            req.body.quote = quote;
+        }
+
+        // Log the req.body object to check its content
+        console.log('req.body:', req.body);
+
+        // Create the company after fetching the quote
         const company = await Company.create(req.body);
+
         res.status(201).json({
-            success: true,
-            data: company
+        success: true,
+        data: company
         });
     } catch(err) {
         res.status(400).json({success: false});

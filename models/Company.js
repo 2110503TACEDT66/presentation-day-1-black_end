@@ -27,6 +27,9 @@ const CompanySchema = new mongoose.Schema({
     tel: {
         type: String,
         required: [true, 'Please add a telephone number']
+    },
+    quote: {
+        type: String
     }
 },{
     toJSON: {virtuals: true},
