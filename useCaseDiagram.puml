@@ -12,6 +12,7 @@ rectangle InterviewSession {
     U -- (Register)
     (Register) -- A
     U -- (View Company)
+    (View Company) -- A
     (Manage Company) -- A
     U -- (Manage Appointment)
     (Manage Appointment) -- A
