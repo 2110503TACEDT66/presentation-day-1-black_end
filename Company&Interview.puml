@@ -20,6 +20,7 @@ package "Company"{
         -website
         -description
         -tel
+        -quote
         -interview_session
     }
 }
