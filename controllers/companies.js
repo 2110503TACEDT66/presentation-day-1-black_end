@@ -94,7 +94,7 @@ exports.getCompany= async (req, res, next)=>{
     }
 };
 //@desc         Create new company
-//@route        POST /api/v1/company
+//@route        POST /api/v1/companies
 //@access       Private
 exports.createCompany= async (req, res, next)=>{
     try {

@@ -9,13 +9,17 @@ actor User as U
 
 
 rectangle InterviewSession {
+    U -- (Authentication)
     U -- (Register)
+    (Authentication) -- A
     (Register) -- A
     U -- (View Company)
     (View Company) -- A
     (Manage Company) -- A
-    U -- (Manage Appointment)
-    (Manage Appointment) -- A
+    U -- (Manage Interview)
+    U -- (View Interview)
+    (View Interview) -- A
+    (Manage Interview) -- A
 }
 
 

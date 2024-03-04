@@ -144,7 +144,7 @@ exports.updateInterview = async (req, res, next) => {
 
 
 //@desc         Delete interview
-//@route        DELETE /api/v1/interview/:id
+//@route        DELETE /api/v1/interviews/:id
 //@access       Private
 exports.deleteInterview = async (req, res, next) => {
     try {
