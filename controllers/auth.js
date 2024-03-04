@@ -5,9 +5,11 @@ const User = require('../models/User');
 //@access       Public
 exports.register = async (req, res, next) => {
     try {
-        const {name, tel, email, password, role} = req.body;
+        var {name, tel, email, password, role, profile_picture} = req.body;
 
-        const profile_picture = `https://avatar.iran.liara.run/username?username=${name}`;
+        if (!profile_picture) {
+            profile_picture = `https://avatar.iran.liara.run/username?username=${name}`;
+        }
         
         //Create user
         const user = await User.create({
