@@ -1,0 +1,21 @@
+@startuml
+
+left to right direction
+
+title "Online Job Fair Registration"
+
+actor Admin as A
+actor User as U
+
+
+rectangle InterviewSession {
+    U -- (Register)
+    (Register) -- A
+    U -- (View Company)
+    (Manage Company) -- A
+    U -- (Manage Appointment)
+    (Manage Appointment) -- A
+}
+
+
+@enduml

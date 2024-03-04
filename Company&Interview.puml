@@ -1,0 +1,58 @@
+@startuml
+left to right direction
+package "Company"{
+    class "<<Application>>\nCompany" as CompanyService{}
+
+    class "<<Resource>>\nCompanies" as ResourceCompanies{
+        <<GET>> +getCompanies():Company
+        <<POST>> +createCompany():Company
+    }
+
+    class "<<Resource>>\nCompany" as ResourceCompany {
+        <<GET>> +getCompany(): Company
+        <<PUT>> +updateCompany(): Company
+        <<DELETE>> +deleteCompany(): void
+    }
+
+    class "<<Representation>>\nCompany" as RepresentationCompany {
+        -name
+        -address
+        -website
+        -description
+        -tel
+        -interview_session
+    }
+}
+
+CompanyService ..> ResourceCompanies:"/companies\n<<Path>>"
+ResourceCompanies ..> ResourceCompany: "/{companyId}\n<<Path>>"
+ResourceCompany ..> RepresentationCompany: "<<use>>"
+
+
+package "Interview"{
+    class "<<Application>>\nInterview" as InterviewService{}
+
+    class "<<Resource>>\nInterviews" as ResourceInterviews{
+        <<GET>> +getInterviews():Interview
+        <<POST>> +addInterview():Interview
+    }
+
+    class "<<Resource>>\nInterview" as ResourceInterview {
+        <<GET>> +getInterview(): Interview
+        <<PUT>> +updateInterview(): Interview
+        <<DELETE>> +deleteInterview(): void
+    }
+
+    class "<<Representation>>\nInterview" as RepresentationInterview {
+        -interViewDate
+        -user
+        -company
+        -createdAt
+    }
+InterviewService ..> ResourceInterviews:"/interviews\n<<Path>>"
+ResourceInterviews  ..> ResourceInterview: "/{interviewId}\n<<Path>>"
+ResourceInterview ..> RepresentationInterview: "<<use>>"
+
+}
+@enduml
+
