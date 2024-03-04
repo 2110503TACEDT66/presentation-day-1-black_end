@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now
+    },
+    profile_picture:{
+        type:String,
+        default:'https://avatar.iran.liara.run/public?username=[default]'
     }
 });
 

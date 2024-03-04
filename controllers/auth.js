@@ -7,13 +7,16 @@ exports.register = async (req, res, next) => {
     try {
         const {name, tel, email, password, role} = req.body;
 
+        const profile_picture = `https://avatar.iran.liara.run/username?username=${name}`;
+        
         //Create user
         const user = await User.create({
             name,
             tel,
             email,
             password,
-            role
+            role,
+            profile_picture
         });
         //Create token
             //const token = user.getSignedJwtToken();
