@@ -1,0 +1,2520 @@
+{
+	"info": {
+		"_postman_id": "211739f7-d21b-49dd-b578-cd28fa85391b",
+		"name": "JobFair",
+		"description": "Backend API for reserving Company interview timeslots, including Companies, Users, and Interviews.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33091986"
+	},
+	"item": [
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Get All Companies\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login as an Admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Companies",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some companies!!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"const first_company_id = response.data[0].id;\r",
+									"\r",
+									"pm.globals.set(\"global_known_company_ID\", first_company_id);\r",
+									"\r",
+									"postman.setNextRequest(\"Create New Company\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/companies",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies"
+							]
+						},
+						"description": "Fetch all companies from database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Company",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Update Single Company\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID"
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_company_ID}}"
+								}
+							]
+						},
+						"description": "Fetch single company from database"
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Company",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_company_id = response.data.id;\r",
+									"\r",
+									"//console.log(new_company);\r",
+									"pm.globals.set(\"global_company_ID\", new_company_id);\r",
+									"\r",
+									"postman.setNextRequest(\"Get Single Company\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random company name\r",
+									"const generatedCompanyName = pm.variables.replaceIn(`{{$randomFirstName}}`);\r",
+									"\r",
+									"// Generate a random phone number\r",
+									"const generatedPhoneNumber = pm.variables.replaceIn(`{{$randomPhoneNumber}}`);\r",
+									"\r",
+									"// Set the generated company name and phone number in environment variables\r",
+									"pm.variables.set('generatedCompanyName', generatedCompanyName);\r",
+									"pm.variables.set('generatedPhoneNumber', generatedPhoneNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{generatedCompanyName}}\",\r\n    \"address\": \"{{generatedCompanyName}}\",\r\n    \"website\": \"https://{{generatedCompanyName}}.com\",\r\n    \"description\": \"{{generatedCompanyName}} test\",\r\n    \"tel\": \"{{generatedPhoneNumber}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies"
+							]
+						},
+						"description": "Create new company in database"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Single Company",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Delete Single Company\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{$randomFirstName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID"
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_company_ID}}"
+								}
+							]
+						},
+						"description": "Update single company in database"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Single Company",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(null);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID"
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_company_ID}}"
+								}
+							]
+						},
+						"description": "Delete single company in database"
+					},
+					"response": []
+				}
+			],
+			"description": "Companies CRUD Functionality"
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Login\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random company name\r",
+									"const generatedName = pm.variables.replaceIn(`{{$randomFirstName}}`);\r",
+									"\r",
+									"// Generate a random phone number\r",
+									"const generatedPhoneNumber = pm.variables.replaceIn(`{{$randomPhoneNumber}}`);\r",
+									"\r",
+									"// Generate a random password\r",
+									"const generatedPassword = pm.variables.replaceIn(`{{$randomBankAccount}}`);\r",
+									"\r",
+									"// Set the generated company name and phone number in environment variables\r",
+									"pm.variables.set('generatedName', generatedName);\r",
+									"pm.variables.set('generatedPhoneNumber', generatedPhoneNumber);\r",
+									"pm.variables.set('generatedPassword', generatedPassword);\r",
+									"\r",
+									"pm.globals.set(\"global_user_name\", generatedName);\r",
+									"pm.globals.set(\"global_user_email\", `${generatedName}@gmail.com`);\r",
+									"pm.globals.set(\"global_user_password\", generatedPassword);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"{{generatedName}}\",\r\n    \"tel\": \"{{generatedPhoneNumber}}\",\r\n    \"email\":\"{{generatedName}}@gmail.com\",\r\n    \"password\":\"{{generatedPassword}}\",\r\n    \"role\":\"user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new User in the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token)\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Get Logged in User With Token\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{global_user_email}}\",\r\n    \"password\":\"{{global_user_password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login to an existing User in the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Logged in User With Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.globals.set(\"global_user_picture\", response.data.profile_picture);\r",
+									"\r",
+									"postman.setNextRequest(\"Get User Profile Picture\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current logged in User"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Profile Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Logout\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{global_user_picture}}",
+							"host": [
+								"{{global_user_picture}}"
+							]
+						},
+						"description": "Get current user profile picture"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('TOKEN', null)\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(null);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/logout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout of current User"
+					},
+					"response": []
+				}
+			],
+			"description": "User Auth Functionality"
+		},
+		{
+			"name": "Interviews",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Get All Interviews\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login as an Admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Interviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some interviews!!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Add One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews"
+							]
+						},
+						"description": "Fetch all interviews from database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Get Interviews For Company\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						},
+						"description": "Fetch single interview from database"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Interviews For Company",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some interviews!!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Update One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews"
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						},
+						"description": "Fetch all interviews of a particular company"
+					},
+					"response": []
+				},
+				{
+					"name": "Add One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_interview_id = response.data._id;\r",
+									"\r",
+									"pm.globals.set(\"global_interview_ID\", new_interview_id);\r",
+									"\r",
+									"postman.setNextRequest(\"Get One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						},
+						"description": "Add a new interview into the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Update One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Delete One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company\":\"{{global_company_ID}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						},
+						"description": "Update an existing interview"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(null);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						},
+						"description": "Delete an interview"
+					},
+					"response": []
+				}
+			],
+			"description": "Interviews CRUD functionality"
+		},
+		{
+			"name": "Utils",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login as an Admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Register New Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"admin\",\r\n    \"tel\": \"0000000000\",\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"123456\",\r\n    \"role\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new Admin in the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Register New User With Profile Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Login\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random company name\r",
+									"const generatedName = pm.variables.replaceIn(`{{$randomFirstName}}`);\r",
+									"\r",
+									"// Generate a random phone number\r",
+									"const generatedPhoneNumber = pm.variables.replaceIn(`{{$randomPhoneNumber}}`);\r",
+									"\r",
+									"// Generate a random password\r",
+									"const generatedPassword = pm.variables.replaceIn(`{{$randomBankAccount}}`);\r",
+									"\r",
+									"// Set the generated company name and phone number in environment variables\r",
+									"pm.variables.set('generatedName', generatedName);\r",
+									"pm.variables.set('generatedPhoneNumber', generatedPhoneNumber);\r",
+									"pm.variables.set('generatedPassword', generatedPassword);\r",
+									"\r",
+									"pm.globals.set(\"global_user_name\", generatedName);\r",
+									"pm.globals.set(\"global_user_email\", `${generatedName}@gmail.com`);\r",
+									"pm.globals.set(\"global_user_password\", generatedPassword);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"{{generatedName}}\",\r\n    \"tel\": \"{{generatedPhoneNumber}}\",\r\n    \"email\":\"{{generatedName}}@gmail.com\",\r\n    \"password\":\"{{generatedPassword}}\",\r\n    \"role\":\"user\",\r\n    \"profile_picture\": \"{{$randomAvatarImage}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new User in the database"
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Company With Quote",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_company_id = response.data.id;\r",
+									"\r",
+									"//console.log(new_company);\r",
+									"pm.globals.set(\"global_company_ID\", new_company_id);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random company name\r",
+									"const generatedCompanyName = pm.variables.replaceIn(`{{$randomFirstName}}`);\r",
+									"\r",
+									"// Generate a random phone number\r",
+									"const generatedPhoneNumber = pm.variables.replaceIn(`{{$randomPhoneNumber}}`);\r",
+									"\r",
+									"// Set the generated company name and phone number in environment variables\r",
+									"pm.variables.set('generatedCompanyName', generatedCompanyName);\r",
+									"pm.variables.set('generatedPhoneNumber', generatedPhoneNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{generatedCompanyName}}\",\r\n    \"address\": \"{{generatedCompanyName}}\",\r\n    \"website\": \"https://{{generatedCompanyName}}.com\",\r\n    \"description\": \"{{generatedCompanyName}} test\",\r\n    \"tel\": \"{{generatedPhoneNumber}}\",\r\n    \"quote\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies"
+							]
+						},
+						"description": "Create new company in database with custom quote"
+					},
+					"response": []
+				}
+			],
+			"description": "Misc. Utils"
+		},
+		{
+			"name": "Presentation",
+			"item": [
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Login User\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate a random company name\r",
+									"const generatedName = pm.variables.replaceIn(`{{$randomFirstName}}`);\r",
+									"\r",
+									"// Generate a random phone number\r",
+									"const generatedPhoneNumber = pm.variables.replaceIn(`{{$randomPhoneNumber}}`);\r",
+									"\r",
+									"// Generate a random password\r",
+									"const generatedPassword = pm.variables.replaceIn(`{{$randomBankAccount}}`);\r",
+									"\r",
+									"// Set the generated company name and phone number in environment variables\r",
+									"pm.variables.set('generatedName', generatedName);\r",
+									"pm.variables.set('generatedPhoneNumber', generatedPhoneNumber);\r",
+									"pm.variables.set('generatedPassword', generatedPassword);\r",
+									"\r",
+									"pm.globals.set(\"global_user_name\", generatedName);\r",
+									"pm.globals.set(\"global_user_email\", `${generatedName}@gmail.com`);\r",
+									"pm.globals.set(\"global_user_password\", generatedPassword);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"{{generatedName}}\",\r\n    \"tel\": \"{{generatedPhoneNumber}}\",\r\n    \"email\":\"{{generatedName}}@gmail.com\",\r\n    \"password\":\"{{generatedPassword}}\",\r\n    \"role\":\"user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token)\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Get Logged in User\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{global_user_email}}\",\r\n    \"password\":\"{{global_user_password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Logged in User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"User Get All Companies\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Get All Companies",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some companies!!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"const first_company_id = response.data[0].id;\r",
+									"\r",
+									"pm.globals.set(\"global_known_company_ID\", first_company_id);\r",
+									"\r",
+									"postman.setNextRequest(\"Check Create Interview Condition\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/companies",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Create Interview Condition",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"User Add One Interview 1\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-14\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Add One Interview 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_interview_id = response.data._id;\r",
+									"\r",
+									"pm.globals.set(\"global_interview_ID\", new_interview_id);\r",
+									"\r",
+									"postman.setNextRequest(\"User Add One Interview 2\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Add One Interview 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_interview_id = response.data._id;\r",
+									"\r",
+									"pm.globals.set(\"global_interview_ID\", new_interview_id);\r",
+									"\r",
+									"postman.setNextRequest(\"User Add One Interview 3\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Add One Interview 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_interview_id = response.data._id;\r",
+									"\r",
+									"pm.globals.set(\"global_interview_ID\", new_interview_id);\r",
+									"\r",
+									"postman.setNextRequest(\"User Add Too Many Interviews\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Add Too Many Interviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"User Get All Interviews\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Get All Interviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some interviews!!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"User Get One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Get One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"User Update One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Update One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"User Delete One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company\":\"{{global_company_ID}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Delete One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Logout User\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set('TOKEN', null)\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Login Admin\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/logout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Admin Get All Interviews\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/auth/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Get All Interviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some interviews!!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"const first_interview_id = response.data[0]._id;\r",
+									"\r",
+									"pm.globals.set(\"global_interview_ID\", first_interview_id);\r",
+									"\r",
+									"postman.setNextRequest(\"Admin Get One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Get One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Admin Update One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Update One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Admin Delete One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company\":\"{{global_known_company_ID}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Delete One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"postman.setNextRequest(\"Admin Add One Interview\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/interviews/:interview_ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"interviews",
+								":interview_ID"
+							],
+							"variable": [
+								{
+									"key": "interview_ID",
+									"value": "{{global_interview_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Add One Interview",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_interview_id = response.data._id;\r",
+									"\r",
+									"pm.globals.set(\"global_interview_ID\", new_interview_id);\r",
+									"\r",
+									"postman.setNextRequest(null);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"interviewDate\": \"2022-05-13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/companies/:company_ID/interviews/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"companies",
+								":company_ID",
+								"interviews",
+								""
+							],
+							"variable": [
+								{
+									"key": "company_ID",
+									"value": "{{global_known_company_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "For testing functionality according to project requirements"
+		}
+	]
+}
